@@ -1,0 +1,34 @@
+name: Nanobot Live Gateway
+
+on:
+  schedule:
+    - cron: '0 */6 * * *' # Restarts every 6 hours to stay within limits
+  workflow_dispatch:      # Manual start button
+
+jobs:
+  run-agent:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Nanobot
+        run: pip install nanobot-ai
+
+      - name: Initialize Nanobot
+        run: nanobot onboard
+
+      - name: Inject Secrets into Config
+        run: |
+          sed -i "s/\${GEMINI_API_KEY}/${{ secrets.GEMINI_API_KEY }}/g" config.json
+          sed -i "s/\${TELEGRAM_BOT_TOKEN}/${{ secrets.TELEGRAM_BOT_TOKEN }}/g" config.json
+          sed -i "s/\${TELEGRAM_USER_ID}/${{ secrets.TELEGRAM_USER_ID }}/g" config.json
+          cp config.json ~/.nanobot/config.json
+
+      - name: Run Nanobot Gateway
+        # This will stay alive for the duration of the Action
+        run: nanobot gateway

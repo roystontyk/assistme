@@ -1,0 +1,20 @@
+{
+  "providers": {
+    "google": {
+      "apiKey": "${GEMINI_API_KEY}"
+    }
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "token": "${TELEGRAM_BOT_TOKEN}",
+      "allowFrom": ["${TELEGRAM_USER_ID}"]
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": "google/gemini-1.5-flash",
+      "temperature": 0.3
+    }
+  }
+}

@@ -1,0 +1,6 @@
+name = "assistme"
+main = "src/index.ts"
+compatibility_date = "2026-03-26"
+
+[vars]
+# We leave this empty; we will add your secret keys in the Cloudflare Dashboard.

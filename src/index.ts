@@ -1,21 +1,20 @@
-import { Nanobot } from "@nanobot-ai/core";
-
 export default {
   async fetch(request, env) {
-    // Initialize the Gemini 3.1 Flash-Lite Brain
-    const agent = new Nanobot({
-      model: "google/gemini-3.1-flash-lite",
-      apiKey: env.GOOGLE_AI_KEY
-    });
-
-    // Process incoming Telegram messages
     if (request.method === "POST") {
       const payload = await request.json();
-      // This sends the reply back to your phone via Telegram
-      await agent.handleUpdate(payload, env.TELEGRAM_TOKEN);
+      
+      // Force a direct reply to Telegram without the AI brain first
+      await fetch(`https://api.telegram.org/bot${env.TELEGRAM_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: payload.message.chat.id,
+          text: "I heard you! Now I'm trying to think..."
+        })
+      });
+
       return new Response("OK");
     }
-
-    return new Response("AssistMe Agent is Online.");
+    return new Response("Agent is active.");
   }
 };
